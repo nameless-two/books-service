@@ -55,7 +55,7 @@ public class BookController {
 	}
 
 	@GetMapping("/publishers/author/{author}")
-	public String[] getPublishersByAuthor(@PathVariable String author) {
+	public Iterable<String> getPublishersByAuthor(@PathVariable String author) {
 		return bookService.findPublishersByAuthor(author);
 	}
 

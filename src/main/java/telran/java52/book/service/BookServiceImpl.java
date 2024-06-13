@@ -1,6 +1,5 @@
 package telran.java52.book.service;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -72,15 +71,15 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public BookDto[] findBooksByAuthor(String author) {
-		return bookRepository.findBooksByAuthor(author).stream().map(b -> modelMapper.map(b, BookDto.class))
-				.toArray(BookDto[]::new);
+	public BookDto[] findBooksByAuthor(String authorName) {
+		Author author = authorRepository.findById(authorName).orElseThrow(EntityNotFoundException::new);
+		return author.getBooks().stream().map(b -> modelMapper.map(b, BookDto.class)).toArray(BookDto[]::new);
 	}
 
 	@Override
-	public BookDto[] findBooksByPublisher(String publisher) {
-		// operational cost?
-		return bookRepository.findBooksByPublisher(publisher).stream().map(b -> modelMapper.map(b, BookDto.class))
+	public BookDto[] findBooksByPublisher(String publisherName) {
+		Publisher publisher = publisherRepository.findById(publisherName).orElseThrow(EntityNotFoundException::new);
+		return publisher.getBooks().stream().map(b -> modelMapper.map(b, BookDto.class))
 				.toArray(BookDto[]::new);
 	}
 
@@ -90,16 +89,16 @@ public class BookServiceImpl implements BookService {
 		return book.getAuthors().stream().map(a -> modelMapper.map(a, AuthorDto.class)).toArray(AuthorDto[]::new);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
-	public String[] findPublishersByAuthor(String author) {
-		// TODO
-//		return null;
-		return bookRepository.findPublishersByAuthor(author);
+	public Iterable<String> findPublishersByAuthor(String author) {
+		return publisherRepository.findDistinctByBooksAuthorsName(author)
+									.map(Publisher::getPublisherName)
+									.toList();
 	}
 
 	@Override
 	public AuthorDto removeAuthor(String authorName) {
-		// TODO Auto-generated method stub
 		Author author = authorRepository.findById(authorName).orElseThrow(EntityNotFoundException::new);
 		authorRepository.delete(author);
 		return modelMapper.map(author, AuthorDto.class);

@@ -1,6 +1,5 @@
 package telran.java52.book.service;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -73,14 +72,13 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public BookDto[] findBooksByAuthor(String author) {
-		return bookRepository.findBooksByAuthor(author).stream().map(b -> modelMapper.map(b, BookDto.class))
+		return bookRepository.findByAuthorsName(author).stream().map(b -> modelMapper.map(b, BookDto.class))
 				.toArray(BookDto[]::new);
 	}
 
 	@Override
 	public BookDto[] findBooksByPublisher(String publisher) {
-		// operational cost?
-		return bookRepository.findBooksByPublisher(publisher).stream().map(b -> modelMapper.map(b, BookDto.class))
+		return bookRepository.findByPublisherPublisherName(publisher).stream().map(b -> modelMapper.map(b, BookDto.class))
 				.toArray(BookDto[]::new);
 	}
 
@@ -92,14 +90,11 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public String[] findPublishersByAuthor(String author) {
-		// TODO
-//		return null;
-		return bookRepository.findPublishersByAuthor(author);
+		return publisherRepository.findPublishersByAuthor(author);
 	}
 
 	@Override
 	public AuthorDto removeAuthor(String authorName) {
-		// TODO Auto-generated method stub
 		Author author = authorRepository.findById(authorName).orElseThrow(EntityNotFoundException::new);
 		authorRepository.delete(author);
 		return modelMapper.map(author, AuthorDto.class);

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import telran.java52.book.dto.exception.EntityNotFoundException;
 import telran.java52.book.model.Author;
 
 @Repository
@@ -21,14 +22,18 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 
 	@Override
 	public Author save(Author author) {
-		em.persist(author);
+//		em.persist(author);
+		em.merge(author);
 		return author;
 	}
 
 	@Override
 	public void deleteById(String authorName) {
-		// TODO Auto-generated method stub
-
+		Author author = em.find(Author.class, authorName);
+		if (author != null)
+			em.remove(author);
+		else
+			throw new EntityNotFoundException();
 	}
 
 }

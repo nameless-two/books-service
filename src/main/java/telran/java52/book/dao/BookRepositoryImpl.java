@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import telran.java52.book.dto.exception.EntityNotFoundException;
+import telran.java52.book.model.Author;
 import telran.java52.book.model.Book;
 
 @Repository
@@ -27,14 +29,15 @@ public class BookRepositoryImpl implements BookRepository {
 
 	@Override
 	public Optional<Book> findById(String isbn) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+		return Optional.ofNullable(em.find(Book.class, isbn));
 	}
 
 	@Override
 	public void deleteById(String isbn) {
-		// TODO Auto-generated method stub
-
+		Book book = em.find(Book.class, isbn);
+		if (book != null)
+			em.remove(book);
+		else
+			throw new EntityNotFoundException();
 	}
-
 }
